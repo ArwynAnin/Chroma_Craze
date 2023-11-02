@@ -4,30 +4,21 @@ using UnityEngine;
 public class RandomSpawningSystem : SpawnManager
 {
     [SerializeField] private Vector2 initialPosition;
-    [SerializeField] private float minimumDistance;
-    [SerializeField] private float maximumDistance;
+    [SerializeField] private float distance;
     [SerializeField] private float minimumHeight;
     [SerializeField] private float maximumHeight;
     [SerializeField] private float spawnDelay;
     private static Vector2 lastPosition;
+    private GameObject lastSpawned;
 
-    private Vector2 randomPosition
+    protected override void Awake()
     {
-        get 
-        {
-            Vector2 newPosition = lastPosition == Vector2.zero ? initialPosition : lastPosition;
-            float distance = Random.Range(minimumDistance, maximumDistance);
-            float height = Random.Range(minimumHeight, maximumHeight);
-            newPosition.x += distance;
-            newPosition.y = height;
-
-            return newPosition;
-        }
+        base.Awake();
+        lastPosition = initialPosition;
     }
 
     private void Start()
     {
-        lastPosition = Vector2.zero;
         StartCoroutine(SpawnRandomPlatforms());
     }
 
@@ -35,18 +26,39 @@ public class RandomSpawningSystem : SpawnManager
     {
         while(true)
         {
-            PlatformGenerator();
+            lastSpawned = PlatformGenerator();
             yield return new WaitForSeconds(spawnDelay);
+            lastPosition = lastSpawned != null ? lastSpawned.transform.position : lastPosition;
         }
     }
 
-    private void PlatformGenerator()
+    private GameObject PlatformGenerator()
     {
         GameObject tempSpawn = GetClone();
-        if (tempSpawn == null) return;
+
+        if (tempSpawn == null) return null;
+
+        tempSpawn.GetComponent<Rigidbody2D>().bodyType = RigidbodyType2D.Kinematic;
+        tempSpawn.transform.localEulerAngles = Vector3.zero;
+        tempSpawn.transform.position = randomPosition;
+
         tempSpawn.SetActive(true);
 
-        tempSpawn.transform.position = randomPosition;
-        lastPosition = randomPosition;
+        return tempSpawn;
+    }
+
+    private Vector2 randomPosition
+    {
+        get
+        {
+            float height = Random.Range(minimumHeight, maximumHeight);
+
+            Vector2 newPosition = lastPosition;
+
+            newPosition.y = height;
+            newPosition.x += distance;
+
+            return newPosition;
+        }
     }
 }

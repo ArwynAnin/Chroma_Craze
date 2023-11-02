@@ -3,21 +3,25 @@ using UnityEngine;
 public class MovingPlatforms : MonoBehaviour
 {
     [SerializeField] private float speed;
-    private Rigidbody2D body;
+    protected Rigidbody2D body;
+    protected bool isFalling;
 
-    private void Awake()
+    protected virtual void Awake()
     {
         body = GetComponent<Rigidbody2D>();
+        isFalling = false;
     }
 
     private void Update()
     {
+        if (isFalling) return;
         body.velocity = Vector2.left * speed;
     }
 
     private void OnTriggerExit2D(Collider2D other)
     {
-        if (!other.CompareTag("MainCamera")) return;
+        if (!(other.CompareTag("MainCamera") || other.CompareTag("Border"))) return;
+        isFalling = false;
         gameObject.SetActive(false);
     }
 }

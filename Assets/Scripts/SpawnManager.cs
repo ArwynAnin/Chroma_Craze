@@ -6,12 +6,12 @@ public class SpawnManager : MonoBehaviour
     [SerializeField] private int spawnCount;
 
     private GameObject[] spawnedObjects;
-    private void Awake()
+    protected virtual void Awake()
     {
         spawnedObjects = new GameObject[spawnCount];
         for (int current = 0; current < spawnedObjects.Length; current++)
         {
-            int randomizedInt = Random.Range(0, targetObject.Length);
+            int randomizedInt = current >= targetObject.Length ? Random.Range(0, targetObject.Length) : current;
             spawnedObjects[current] = Instantiate(targetObject[randomizedInt], transform);
             spawnedObjects[current].SetActive(false);
         }

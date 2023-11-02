@@ -1,3 +1,5 @@
+using System.Collections;
+using UnityEditor;
 using UnityEngine;
 
 public class PlayerController : MonoBehaviour
@@ -7,9 +9,16 @@ public class PlayerController : MonoBehaviour
     [Space] [Header("Movement Settings")]
     [SerializeField] private float speed;
     [SerializeField] private float jumpForce;
+    [SerializeField] private float deathDelay;
+
     [Space] [Header("Detection Settings")]
     [SerializeField] private float ray;
     [SerializeField] private LayerMask layer;
+
+    [Space] [Header("Color Indicator Settings")]
+    [SerializeField] private GameObject ui;
+    [SerializeField] private Material[] colors;
+
     private Rigidbody2D body;
     private Animator animator;
     private Collider2D _collider;
@@ -17,6 +26,9 @@ public class PlayerController : MonoBehaviour
     #endregion
 
     #region Dynamic Variables
+
+    public static Renderer colorIndicator;
+    private bool isDead;
 
     private float horizontal
     {
@@ -72,18 +84,29 @@ public class PlayerController : MonoBehaviour
 
     #endregion
 
-
     private void Awake()
     {
+        isDead = false;
         body = GetComponent<Rigidbody2D>();
         animator = GetComponent<Animator>();
         _collider = GetComponent<Collider2D>();
+
+        colorIndicator = ui.GetComponent<Renderer>();
     }
 
     private void Update()
     {
+        if (isDead) return;
         Run();
         Jump();
+        ColorChanger();
+    }
+
+    private void OnTriggerExit2D(Collider2D other)
+    {
+        if (!(other.CompareTag("MainCamera") || other.CompareTag("Border"))) return;
+        isDead = true;
+        StartCoroutine(Death());
     }
 
     private void Run()
@@ -96,5 +119,25 @@ public class PlayerController : MonoBehaviour
     {
         if (!isGrounded || !Input.GetKeyDown(KeyCode.Space)) return;
         body.AddForce(Vector2.up * jumpForce, ForceMode2D.Impulse);
+    }
+
+    private void ColorChanger()
+    {
+        colorIndicator.material = Input.GetKeyDown(KeyCode.Alpha1) ? colors[0] :
+            Input.GetKeyDown(KeyCode.Alpha2) ? colors[1] :
+            Input.GetKeyDown(KeyCode.Alpha3) ? colors[2] :
+            colorIndicator.material;
+    }
+
+    private IEnumerator Death()
+    {
+        body.velocity = Vector2.zero;
+        yield return new WaitForSeconds(deathDelay);
+
+        #if UNITY_EDITOR
+            UnityEditor.EditorApplication.isPlaying = false;
+        #endif
+
+        Application.Quit();
     }
 }
