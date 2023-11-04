@@ -1,4 +1,5 @@
 using System.Collections;
+using System.Linq;
 using UnityEditor;
 using UnityEngine;
 
@@ -22,6 +23,8 @@ public class PlayerController : MonoBehaviour
     private Rigidbody2D body;
     private Animator animator;
     private Collider2D _collider;
+
+    private string[] deathBlocks;
 
     #endregion
 
@@ -63,9 +66,10 @@ public class PlayerController : MonoBehaviour
             Bounds bounds = _collider.bounds;
             Vector2 center = bounds.center;
             float detectionDistance = bounds.extents.y + ray;
+            float offset = 0.35f;
 
-            Vector2 left = new Vector2(center.x - bounds.extents.x, center.y);
-            Vector2 right = new Vector2(center.x + bounds.extents.x, center.y);
+            Vector2 left = new Vector2(center.x - bounds.extents.x + offset, center.y);
+            Vector2 right = new Vector2(center.x + bounds.extents.x - offset, center.y);
 
             // detect ground layer
             RaycastHit2D leftHit = Physics2D.Raycast(left, Vector2.down, detectionDistance, layer);
@@ -92,6 +96,8 @@ public class PlayerController : MonoBehaviour
         _collider = GetComponent<Collider2D>();
 
         colorIndicator = ui.GetComponent<Renderer>();
+
+        deathBlocks = new string[] { "Border", "Saw", "Spikes", "MainCamera"};
     }
 
     private void Update()
@@ -102,9 +108,9 @@ public class PlayerController : MonoBehaviour
         ColorChanger();
     }
 
-    private void OnTriggerExit2D(Collider2D other)
+    private void OnTriggerEnter2D(Collider2D other)
     {
-        if (!(other.CompareTag("MainCamera") || other.CompareTag("Border"))) return;
+        if (!deathBlocks.Contains(other.tag)) return;
         isDead = true;
         StartCoroutine(Death());
     }
