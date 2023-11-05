@@ -2582,6 +2582,14 @@ PrefabInstance:
       propertyPath: m_Name
       value: MaskGuy
       objectReference: {fileID: 0}
+    - target: {fileID: 6170155669461678025, guid: a4f9ea64988151540bde83f1932b780d, type: 3}
+      propertyPath: m_Material
+      value: 
+      objectReference: {fileID: 6200000, guid: 3a3c83e292a47164c887a3653333a73d, type: 2}
+    - target: {fileID: 7009229030647246727, guid: a4f9ea64988151540bde83f1932b780d, type: 3}
+      propertyPath: m_Material
+      value: 
+      objectReference: {fileID: 6200000, guid: 3a3c83e292a47164c887a3653333a73d, type: 2}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
