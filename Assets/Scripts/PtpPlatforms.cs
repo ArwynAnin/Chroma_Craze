@@ -14,6 +14,16 @@ public class PtpPlatforms : MonoBehaviour
         StartCoroutine(pointToPointTravel());
     }
 
+    private void OnCollisionEnter2D(Collision2D other)
+    {
+        other.transform.parent = sprite.transform;
+    }
+
+    private void OnCollisionExit2D(Collision2D other)
+    {
+        other.transform.SetParent(null);
+    }
+
     private IEnumerator pointToPointTravel()
     {
         while (true)
