@@ -12,6 +12,11 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private float jumpForce;
     [SerializeField] private float deathDelay;
 
+    [Space] [Header ("Dash Settings")]
+    [SerializeField] private float dashIntensity;
+    [SerializeField] private float dashDuration;
+    [SerializeField] private float dashCooldown;
+
     [Space] [Header("Detection Settings")]
     [SerializeField] private float ray;
     [SerializeField] private LayerMask layer;
@@ -32,6 +37,9 @@ public class PlayerController : MonoBehaviour
 
     public static Renderer colorIndicator;
     private bool isDead;
+
+    private bool isDashing;
+    private bool canDash;
 
     private float horizontal
     {
@@ -60,9 +68,6 @@ public class PlayerController : MonoBehaviour
     {
         get
         {
-            animator.SetBool("IsJumping", body.velocity.y > 0);
-            animator.SetBool("IsFalling", body.velocity.y < 0);
-
             Bounds bounds = _collider.bounds;
             Vector2 center = bounds.center;
             float detectionDistance = bounds.extents.y + ray;
@@ -81,6 +86,8 @@ public class PlayerController : MonoBehaviour
             bool grounded = leftHit.collider != null || rightHit.collider != null;
 
             animator.SetBool("IsGrounded", grounded);
+            animator.SetBool("IsJumping", body.velocity.y > 0);
+            animator.SetBool("IsFalling", body.velocity.y < 0);
 
             return grounded;
         }
@@ -90,6 +97,7 @@ public class PlayerController : MonoBehaviour
 
     private void Awake()
     {
+        canDash = true;
         isDead = false;
         body = GetComponent<Rigidbody2D>();
         animator = GetComponent<Animator>();
@@ -103,9 +111,12 @@ public class PlayerController : MonoBehaviour
     private void Update()
     {
         if (isDead) return;
+        ColorChanger();
+
+        if (Input.GetKeyDown(KeyCode.LeftShift) && canDash) StartCoroutine(Dash());
+        if (isDashing) return;
         Run();
         Jump();
-        ColorChanger();
     }
 
     private void OnTriggerEnter2D(Collider2D other)
@@ -133,6 +144,22 @@ public class PlayerController : MonoBehaviour
             Input.GetKeyDown(KeyCode.Alpha2) ? colors[1] :
             Input.GetKeyDown(KeyCode.Alpha3) ? colors[2] :
             colorIndicator.material;
+    }
+
+    private IEnumerator Dash()
+    {
+        isDashing = true;
+        canDash = false;
+
+        body.velocity = new Vector2(horizontal * dashIntensity, body.velocity.y);
+
+        yield return new WaitForSeconds(dashDuration);
+        isDashing = false;
+
+        yield return new WaitForSeconds(dashCooldown);
+        canDash = true;
+
+        yield return null;
     }
 
     private IEnumerator Death()
