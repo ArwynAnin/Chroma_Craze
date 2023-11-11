@@ -1,7 +1,8 @@
 using System.Collections;
 using System.Linq;
-using UnityEditor;
 using UnityEngine;
+using UnityEngine.SceneManagement;
+using UnityEngine.Tilemaps;
 
 public class PlayerController : MonoBehaviour
 {
@@ -31,6 +32,7 @@ public class PlayerController : MonoBehaviour
     private Collider2D _collider;
 
     private string[] deathBlocks;
+    private string[] respawnBlocks;
 
     #endregion
 
@@ -107,9 +109,11 @@ public class PlayerController : MonoBehaviour
 
         colorIndicator = ui.GetComponent<Renderer>();
 
-        spawnPoint = transform;
+        int index = SceneManager.GetActiveScene().buildIndex;
+        PlayerPrefs.SetInt("index", index);
 
-        deathBlocks = new string[] { "Border", "Saw", "Spikes", "MainCamera"};
+        respawnBlocks = new string[] { "Saw", "Spikes" };
+        deathBlocks = new string[] { "Border", "MainCamera", "Troll" };
     }
 
     private void Update()
@@ -125,9 +129,18 @@ public class PlayerController : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D other)
     {
-        if (!deathBlocks.Contains(other.tag)) return;
+        if (deathBlocks.Contains(other.tag)) StartCoroutine(GameOver());
+        if (!respawnBlocks.Contains(other.tag)) return;
         isDead = true;
-        StartCoroutine(Death());
+        StartCoroutine(Respawn());
+    }
+
+    private void OnCollisionEnter2D(Collision2D other)
+    {
+        if (other.gameObject.CompareTag("Blocks")) return;
+        TryGetComponent<TilemapRenderer>(out TilemapRenderer renderer);
+        if (renderer == null) return;
+        ColorChecker(renderer);
     }
 
     private void Run()
@@ -151,6 +164,12 @@ public class PlayerController : MonoBehaviour
             colorIndicator.material;
     }
 
+    private void ColorChecker(TilemapRenderer renderer)
+    {
+        if (renderer.material == colorIndicator.material) return;
+        Respawn();
+    }
+
     private IEnumerator Dash()
     {
         isDashing = true;
@@ -167,11 +186,19 @@ public class PlayerController : MonoBehaviour
         yield return null;
     }
 
-    private IEnumerator Death()
+    private IEnumerator Respawn()
     {
         body.velocity = Vector2.zero;
         yield return new WaitForSeconds(deathDelay);
         isDead = false;
         transform.position = spawnPoint.position;
+    }
+
+    private IEnumerator GameOver()
+    {
+        isDead = true;
+        body.velocity = Vector2.zero;
+        yield return new WaitForSeconds(deathDelay);
+        SceneManager.LoadScene(3);
     }
 }

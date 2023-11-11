@@ -2534,6 +2534,10 @@ PrefabInstance:
       propertyPath: ui
       value: 
       objectReference: {fileID: 436258749}
+    - target: {fileID: 1270710306706266672, guid: a4f9ea64988151540bde83f1932b780d, type: 3}
+      propertyPath: jumpForce
+      value: 8
+      objectReference: {fileID: 0}
     - target: {fileID: 1505216412116695482, guid: a4f9ea64988151540bde83f1932b780d, type: 3}
       propertyPath: m_RootOrder
       value: 5

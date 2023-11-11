@@ -7,10 +7,10 @@ public class ReturnToCheckPoint : MonoBehaviour
 
     private void Awake()
     {
-        _renderer = GetComponent<TilemapRenderer>();
+        _renderer = GetComponentInChildren<TilemapRenderer>();
     }
 
-    private void OnCollisionEnter(Collision other)
+    private void OnCollisionEnter2D (Collision2D other)
     {
         if (other.gameObject.CompareTag("Player")) Debug.Log("hit");
         if (_renderer.material.color == PlayerController.colorIndicator.material.color || !other.gameObject.CompareTag("Player")) return;

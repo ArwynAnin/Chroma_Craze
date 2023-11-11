@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -14,6 +12,13 @@ public class main : MonoBehaviour
     {
         SceneManager.LoadScene(2);
     }
+
+    public void retry()
+    {
+        int index = PlayerPrefs.GetInt("index");
+        SceneManager.LoadScene(index);
+    }
+
     public void QuitGame()
     {
         Debug.Log("QUIT!");
