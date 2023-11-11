@@ -16,11 +16,13 @@ public class PtpPlatforms : MonoBehaviour
 
     private void OnCollisionEnter2D(Collision2D other)
     {
+        if (!other.gameObject.CompareTag("Player")) return;
         other.transform.parent = sprite.transform;
     }
 
     private void OnCollisionExit2D(Collision2D other)
     {
+        if (!other.gameObject.CompareTag("Player")) return;
         other.transform.SetParent(null);
     }
 

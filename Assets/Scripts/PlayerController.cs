@@ -11,6 +11,7 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private float speed;
     [SerializeField] private float jumpForce;
     [SerializeField] private float deathDelay;
+    [SerializeField] private AudioSource jumpSound;
 
     [Space] [Header ("Dash Settings")]
     [SerializeField] private float dashIntensity;
@@ -35,6 +36,7 @@ public class PlayerController : MonoBehaviour
 
     #region Dynamic Variables
 
+    public static Transform spawnPoint;
     public static Renderer colorIndicator;
     private bool isDead;
 
@@ -105,6 +107,8 @@ public class PlayerController : MonoBehaviour
 
         colorIndicator = ui.GetComponent<Renderer>();
 
+        spawnPoint = transform;
+
         deathBlocks = new string[] { "Border", "Saw", "Spikes", "MainCamera"};
     }
 
@@ -135,7 +139,8 @@ public class PlayerController : MonoBehaviour
     private void Jump()
     {
         if (!isGrounded || !Input.GetKeyDown(KeyCode.Space)) return;
-        body.AddForce(Vector2.up * jumpForce, ForceMode2D.Impulse);
+        jumpSound.Play();
+        body.velocity = new Vector2(body.velocity.x, jumpForce);
     }
 
     private void ColorChanger()
@@ -166,11 +171,7 @@ public class PlayerController : MonoBehaviour
     {
         body.velocity = Vector2.zero;
         yield return new WaitForSeconds(deathDelay);
-
-        #if UNITY_EDITOR
-            UnityEditor.EditorApplication.isPlaying = false;
-        #endif
-
-        Application.Quit();
+        isDead = false;
+        transform.position = spawnPoint.position;
     }
 }
