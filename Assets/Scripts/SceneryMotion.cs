@@ -14,6 +14,7 @@ public class SceneryMotion : MonoBehaviour
     private void Update()
     {
         image.uvRect = new Rect(image.uvRect.position + motion * Time.deltaTime, image.uvRect.size);
+        if (Mathf.Abs(image.uvRect.x) >= 1) image.uvRect = new Rect(Vector2.zero, image.uvRect.size);
     }
 
 }

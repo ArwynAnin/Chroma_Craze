@@ -3,6 +3,11 @@ using UnityEngine.SceneManagement;
 
 public class main : MonoBehaviour
 {
+    private void Awake()
+    {
+        Time.timeScale = 1;
+    }
+
     public void Playgame()
     {
         SceneManager.LoadScene(1);
@@ -24,6 +29,7 @@ public class main : MonoBehaviour
         Debug.Log("QUIT!");
         Application.Quit();
     }
+
     public void menu()
     {
         SceneManager.LoadScene(0);

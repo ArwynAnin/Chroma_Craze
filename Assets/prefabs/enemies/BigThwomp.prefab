@@ -9,7 +9,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 7977301013893827413}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: Point B
   m_TagString: Untagged
   m_Icon: {fileID: 6519382022992737161, guid: 0000000000000000d000000000000000, type: 0}
@@ -43,7 +43,7 @@ GameObject:
   - component: {fileID: 667009897610519788}
   - component: {fileID: 6311068507594296370}
   - component: {fileID: 8768287206723076550}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: Sprite
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -194,7 +194,7 @@ GameObject:
   - component: {fileID: 1135448839876533505}
   - component: {fileID: 6532924508436716925}
   - component: {fileID: -4812412554706305124}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: BigThwomp
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -273,7 +273,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4662671744013802069}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: Point A
   m_TagString: Untagged
   m_Icon: {fileID: -5938655980376293919, guid: 0000000000000000d000000000000000, type: 0}
